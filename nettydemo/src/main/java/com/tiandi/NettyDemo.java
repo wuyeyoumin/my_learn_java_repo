@@ -6,8 +6,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -31,9 +29,9 @@ public class NettyDemo {
                         protected void initChannel(Channel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             p.addLast("httpCodec", new HttpServerCodec());
-                            p.addLast("httpAggregator", new HttpObjectAggregator(0xffffff));
+                            p.addLast("httpAggregator", new HttpObjectAggregator(65536));
                             p.addLast("chunkedWriteHandler", new ChunkedWriteHandler());
-                            p.addLast("myHandler", new MySecondHandler());
+                            p.addLast("myHandler", new FileTransportHandler());
                         }
                     });
             ChannelFuture f = b.bind().sync();
